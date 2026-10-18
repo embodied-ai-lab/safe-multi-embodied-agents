@@ -1,0 +1,1 @@
+{"name":"delayed_grant","horizon":60,"lease_seconds":4,"network":{"delay":0.05,"first_grant_extra_delay":5}}

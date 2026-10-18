@@ -1,0 +1,9 @@
+<routes>
+  <vType id="car" length="4.5" width="1.8" accel="2" decel="4" emergencyDecel="4" sigma="0" maxSpeed="6" minGap="0"/>
+  <route id="A_route" edges="W_in E_out"/>
+  <route id="B_route" edges="S_in N_out"/>
+  <route id="C_route" edges="E_in W_out"/>
+  <vehicle id="A" type="car" route="A_route" depart="0" departPos="38" departSpeed="0" color="0.15,0.55,1"/>
+  <vehicle id="B" type="car" route="B_route" depart="0" departPos="38" departSpeed="0" color="1,0.65,0.1"/>
+  <vehicle id="C" type="car" route="C_route" depart="0" departPos="38" departSpeed="0" color="0.2,0.8,0.55"/>
+</routes>

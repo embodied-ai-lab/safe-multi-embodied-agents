@@ -1,0 +1,5 @@
+<connections>
+  <connection from="W_in" to="E_out"/>
+  <connection from="S_in" to="N_out"/>
+  <connection from="E_in" to="W_out"/>
+</connections>

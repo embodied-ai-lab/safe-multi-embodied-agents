@@ -1,0 +1,79 @@
+Bootstrap: docker
+From: ubuntu:24.04
+
+# Safe Multi-Embodied Agents runtime image: Ubuntu 24.04, Python 3.12, and the
+# pinned SUMO 1.28.0 Python packages. The image holds dependencies only. Lab
+# source, results, instructor material, model weights, and credentials are never
+# copied in. System packages that would need sudo on a native machine are
+# installed here, in %post, with the build's privileges. Build it from the lab
+# repository root so requirements.txt can be copied: see setup/SOL.md and
+# scripts/build_image.sh.
+
+%labels
+    Description "Safe Multi-Embodied Agents CPU-only SUMO 1.28.0 runtime"
+    Course "ASU CSE 494/598 Fall 2026"
+    Python "3.12 (Ubuntu 24.04)"
+    SUMO "1.28.0 (PyPI eclipse-sumo)"
+
+%files
+    requirements.txt /opt/lab-requirements.txt
+
+%post
+    set -eu
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update
+    apt-get install -y --no-install-recommends \
+        python3 python3-venv python3-pip ca-certificates \
+        libatomic1 libgomp1 libgl1 libglu1-mesa libx11-6 libxext6 libxrender1 libsm6 libice6 libfontconfig1
+    python3 -m venv /opt/lab
+    /opt/lab/bin/python -m pip install --no-cache-dir --upgrade pip
+    /opt/lab/bin/python -m pip install --no-cache-dir -r /opt/lab-requirements.txt
+    /opt/lab/bin/python -m pip check
+    # Sol's 4.18 kernel rejects overlapping ELF load pages in the pinned wheel
+    # (execve EEXIST, then SIGSEGV). Let the image's glibc loader map the unchanged
+    # binaries. Importing sumo preserves the wheel launcher's data-path setup.
+    /opt/lab/bin/python - <<'PY'
+from pathlib import Path
+for app in ("sumo", "netconvert"):
+    launcher = Path("/opt/lab/bin") / app
+    launcher.write_text(f'''#!/opt/lab/bin/python
+import os
+import sys
+import sumo
+loader = "/lib64/ld-linux-x86-64.so.2"
+binary = os.path.join(sumo.SUMO_HOME, "bin", {app!r})
+os.execv(loader, [loader, binary, *sys.argv[1:]])
+''')
+    launcher.chmod(0o755)
+PY
+    mkdir -p /work
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+    # Record what was installed, for the image's own provenance.
+    { echo "built: $(date -u +%Y-%m-%dT%H:%M:%SZ)"; . /etc/os-release; echo "base: $PRETTY_NAME";
+      /opt/lab/bin/python --version; /opt/lab/bin/python -m pip freeze;
+      echo "headless launchers: sumo and netconvert via the image's glibc loader (Sol kernel compatibility)";
+    } > /opt/lab-manifest.txt
+
+%environment
+    export PATH=/opt/lab/bin:$PATH
+    export PYTHONNOUSERSITE=1
+    export PYTHONDONTWRITEBYTECODE=1
+    export LC_ALL=C.UTF-8
+
+%test
+    set -eu
+    /opt/lab/bin/python -c "import traci, sumolib; print('Python dependencies available')"
+    /opt/lab/bin/sumo --version
+    /opt/lab/bin/netconvert --version
+    cat /opt/lab-manifest.txt
+
+%runscript
+    exec /opt/lab/bin/python "$@"
+
+%help
+    Safe Multi-Embodied Agents runtime (ASU CSE 494/598 Fall 2026). Bind the lab
+    directory to /work and run commands through scripts/sol_exec.sh with SIF set:
+        export SIF=/scratch/$USER/safe-multi-embodied-agents.sif
+        bash scripts/sol_exec.sh python run_lab.py --scenario nominal --mode independent --out results/baseline
+    No lab source, instructor solutions, results, or model weights are in this image.

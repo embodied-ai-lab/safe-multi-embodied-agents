@@ -1,0 +1,1 @@
+{"name":"lossy","horizon":60,"lease_seconds":4,"network":{"delay":0.05,"jitter":0.6,"loss":0.2,"duplicate":0.3,"duplicate_delay":0.9}}
