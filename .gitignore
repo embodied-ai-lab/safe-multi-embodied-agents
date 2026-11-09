@@ -1,0 +1,37 @@
+# Python environments and caches
+.venv/
+venv/
+env/
+.env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.cache/
+
+# Generated experiment output. Keep the directory marker only.
+results/*
+!results/.gitkeep
+
+# Submission products. The template stays tracked; the filled copy and ZIPs do not.
+submission/answers.md
+submission/*.zip
+*.zip
+
+# Container images and scheduler output
+*.sif
+*.simg
+slurm-*.out
+slurm-*.err
+
+# Student-starter exports written next to this checkout by mistake
+student-template*/
+student-export*/
+
+# Editor and OS files
+.vscode/
+.idea/
+*.swp
+.DS_Store

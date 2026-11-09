@@ -4,8 +4,9 @@
 #   make PY="bash scripts/sol_exec.sh python" <target>
 
 SHELL := /bin/bash
-ROOT := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
-PY ?= $(if $(wildcard $(ROOT)/.venv/bin/python),$(ROOT)/.venv/bin/python,python3)
+# Run make from the lab directory. The default interpreter is the .venv there, named by a
+# relative path so a lab directory whose path contains spaces still works.
+PY ?= $(if $(wildcard .venv/bin/python),.venv/bin/python,python3)
 SCENARIO ?= nominal
 MODE ?= robust
 OUT ?= results/$(SCENARIO)-$(MODE)

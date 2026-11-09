@@ -55,15 +55,15 @@ Run the `robust` policy for the nominal scenario. A successful launch means the 
 python run_matrix.py --out results/comparison
 ```
 
-The matrix runs four scenarios (`nominal`, `slow_car`, `delayed_grant`, `lossy`) by three policies (`independent`, `lease`, `robust`) at seed 2026 and writes `comparison.csv`. Summarize all 12 runs in `submission/answers.md` with these columns: scenario, policy, completed cars, exclusion-violation seconds, collision-pair count, maximum observed wait, and all-clear time. Write `incomplete` when fewer than three cars cleared.
+The matrix runs four scenarios (`nominal`, `slow_car`, `delayed_grant`, `lossy`) by three policies (`independent`, `lease`, `robust`) at seed 2026 and writes `comparison.csv`. On Sol, `sbatch scripts/sol_matrix.sbatch` runs the same 12 runs into `results/comparison/` (see `setup/SOL.md`). Summarize all 12 runs in `submission/answers.md` with these columns: scenario, policy, completed cars, exclusion-violation seconds, collision-pair count, maximum observed wait, and all-clear time. Write `incomplete` when fewer than three cars cleared.
 
-Compare `lease` with `robust` for the slow car and for the delayed grant. For each, explain one sequence from a message delivery or timer expiry, through an entry decision, to the observed vehicle motion. Include one labeled screenshot of the replay's occupancy timeline or one plot made from `trajectory.csv`, saved under `results/` and referenced from `submission/answers.md`.
+Compare `lease` with `robust` for the slow car and for the delayed grant. For each, explain one sequence from a message delivery or timer expiry, through an entry decision, to the observed vehicle motion. A short causal account is enough here; Part 4 asks for the detailed timestamped trace of one of these two scenarios. Include one labeled screenshot of the replay's occupancy timeline or one plot made from `trajectory.csv`, saved under `results/` and referenced from `submission/answers.md`.
 
 For `lossy`, explain the roles of retransmission and duplicate handling. A seed fixes a run for a given implementation, but different policies send different messages, so the same seed does not give an identical packet-loss trace across policies. Keep the configured distribution and seed fixed and make no statistical-significance claims from a single run.
 
 ## Part 4. Explain one failure and one limit (1 point)
 
-For either `slow_car` or `delayed_grant`, cite at least three simulated timestamps from `events.jsonl` that explain the timer-based failure, and the corresponding corrected sequence. Distinguish a geometric collision from a violation of the conservative exclusion rule.
+Take one of the two scenarios compared in Part 3, `slow_car` or `delayed_grant`, and give its detailed trace: cite at least three simulated timestamps from `events.jsonl` that explain the timer-based failure, and the corresponding corrected sequence. Distinguish a geometric collision from a violation of the conservative exclusion rule.
 
 Then explain what the corrected coordinator does if every release from a car that already entered is lost forever, and why that is the intended behavior under this lab's assumptions. State one assumption whose failure would invalidate the safety argument, for example truthful clearance messages, correct actuation, a single coordinator that keeps its state, or the shared clock.
 
@@ -78,11 +78,11 @@ python run_lab.py --scenario nominal --mode robust --seed 2026 --delay 0.8 --los
 python run_lab.py --scenario nominal --mode robust --seed 2026 --delay 0.8 --loss 0 --lease-seconds 4 --out results/graduate-window-4
 ```
 
-`make grad` runs the same four commands. Before running, predict which windows can let a grant arrive in time. Report completion, expired grants, exclusion violations, waiting, and all-clear time for each window. Explain any repeated expired-grant cycle and why a long wait or no completion differs from a collision. Include the 0.1 s delivery-step granularity in your reasoning. Keep the planner, controller limits, initial conditions, and horizon unchanged across the sweep.
+`make grad` runs the same four commands, and on Sol `sbatch --export=ALL,RUN_GRAD=1 scripts/sol_matrix.sbatch` runs the Part 3 matrix and these four runs in one job. Before running, predict which windows can let a grant arrive in time. Report completion, expired grants, exclusion violations, waiting, and all-clear time for each window. Explain any repeated expired-grant cycle and why a long wait or no completion differs from a collision. Include the 0.1 s delivery-step granularity in your reasoning. Keep the planner, controller limits, initial conditions, and horizon unchanged across the sweep.
 
 ## Deliverables
 
-Put your written answers in `submission/answers.md`. Copy `submission/answers_template.md` and fill in every field. Build the ZIP with `make submission GROUPID=<your group id>` (CSE 494) or `make submission GROUPID=<your group id> REQUIRE_GRAD=1` (CSE 598), then upload only that ZIP to Canvas. The CSE 598 form fails if any of the four `results/graduate-window-*` directories is absent. The ZIP must contain your current `cavlab/policies.py` and any other code you changed, `results/part1-*`, `results/comparison/`, and your figure. Do not include environments, model weights, caches, Git metadata, or secrets. Canvas grades the ZIP you upload, not a newer copy on GitHub or Sol, and code that does not run receives limited credit.
+Put your written answers in `submission/answers.md`. Copy `submission/answers_template.md` and fill in every field. Build the ZIP with `make submission GROUPID=<your group id>` (CSE 494) or `make submission GROUPID=<your group id> REQUIRE_GRAD=1` (CSE 598), then upload only that ZIP to Canvas. The CSE 598 form fails if any of the four `results/graduate-window-*` directories is absent. The packager also warns about missing Part 1 runs, comparison runs, run files, or a figure and lists every file it skipped; it still builds the ZIP, so read its output before uploading. The ZIP must contain your current `cavlab/policies.py` and any other code you changed, `results/part1-*`, `results/comparison/`, and your figure. Do not include environments, model weights, caches, Git metadata, or secrets. Canvas grades the ZIP you upload, not a newer copy on GitHub or Sol, and code that does not run receives limited credit.
 
 ## Group work
 

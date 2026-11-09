@@ -75,7 +75,7 @@ Open `replay.html` with a file manager or browser. It needs no web server and ma
 | `make replay-planner` | `python run_lab.py --mode robust --planner replay --planner-file scenarios/replay_example.json --out results/replay-planner` | Replace the planner with the synthetic replay component |
 | `make submission GROUPID=05` | `python package_submission.py --groupid 05` | One group ZIP under `submission/` |
 
-On Sol, run the same targets inside the container with `make PY="bash scripts/sol_exec.sh python" <target>`.
+On Sol, run the same targets inside the container with `make PY="bash scripts/sol_exec.sh python" <target>`. The batch job `sbatch scripts/sol_matrix.sbatch` writes `results/comparison/` and, with `RUN_GRAD=1`, the four `results/graduate-window-*` runs, the same paths as the targets above ([setup/SOL.md](setup/SOL.md)).
 
 ## Required comparison
 
@@ -110,7 +110,7 @@ make submission GROUPID=<your group id> REQUIRE_GRAD=1   # CSE 598: fail unless 
 unzip -l submission/group<your group id>_safe-multi-embodied-agents.zip
 ```
 
-The ZIP contains `answers.md` at its root, the lab code, configuration, the setup notes, and everything under `results/` with a recognized file type. It excludes virtual environments, caches, Git metadata, hidden files, container images, and archives. Put custom Python modules under `cavlab/`, configuration under `scenarios/`, and figures under `results/` so they are included. Do not put keys, passwords, or model weights in the lab directories. One group member uploads the single ZIP to Canvas. Canvas grades the uploaded ZIP, not a newer copy on GitHub or Sol, so inspect it before submitting. CSE 598 work goes in that same ZIP; Canvas has a separate grade item for the extra point with no second upload.
+The ZIP contains `answers.md` at its root, the blank `submission/answers_template.md`, the lab code, configuration, the setup notes, and everything under `results/` with a recognized file type (`.json`, `.jsonl`, `.csv`, `.html`, `.log`, `.txt`, `.md`, `.png`, `.jpg`, `.svg`, `.pdf`, plus the code and configuration types). It excludes virtual environments, caches, Git metadata, hidden files, symbolic links, container images, archives, and files above 25 MB, and it lists every file it skipped so you can see what was left out. Before writing the ZIP it checks the layout the assignment asks for: `results/part1-*`, the 12 runs and `comparison.csv` under `results/comparison/`, the six files of each run, a figure under `results/`, and for CSE 598 the four `results/graduate-window-*` runs. Missing items are printed as warnings but do not stop the ZIP, so partial work can still be submitted; only `REQUIRE_GRAD=1` refuses to package without the complete sweep. These checks look at file names only, never at whether a result or an answer is correct. Put custom Python modules under `cavlab/`, configuration under `scenarios/`, and figures under `results/` so they are included. Do not put keys, passwords, or model weights in the lab directories. One group member uploads the single ZIP to Canvas. Canvas grades the uploaded ZIP, not a newer copy on GitHub or Sol, so inspect it before submitting. CSE 598 work goes in that same ZIP; Canvas has a separate grade item for the extra point with no second upload.
 
 ## License
 

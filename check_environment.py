@@ -122,9 +122,14 @@ def main():
                      "cavlab/policies.py", "submission/answers_template.md"):
         exists = (ROOT / relative).is_file()
         record("ok" if exists else "FAIL", relative, "present" if exists else "missing")
-    answers = (ROOT / "submission" / "answers.md").is_file()
-    record("ok" if answers else "note", "submission/answers.md",
-           "present" if answers else "not created yet: cp submission/answers_template.md submission/answers.md")
+    if (ROOT / "submission" / "answers.md").is_file():
+        record("ok", "submission/answers.md", "present")
+    elif (ROOT / "answers.md").is_file():
+        # package_submission.py stores the answers at the archive root, so this is an extracted ZIP.
+        record("ok", "submission/answers.md", "packaged as answers.md at the top level (extracted submission ZIP)")
+    else:
+        record("note", "submission/answers.md",
+               "not created yet: cp submission/answers_template.md submission/answers.md")
     try:
         (ROOT / "results").mkdir(exist_ok=True)
         probe = ROOT / "results" / ".write-test"

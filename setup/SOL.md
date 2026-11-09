@@ -10,7 +10,7 @@ Use this route to run the CPU simulation inside an Ubuntu-based container on ASU
 | Partition and QoS | `public`, `class` | On October 17, 2026, `public` was up and allowed the existing `class` QoS; class-account access remains unverified |
 | Apptainer module | `apptainer/1.4.5` | Available on Sol on October 17, 2026; load it inside the allocation |
 | SquashFS module (builds only) | `squashfs-4.6.1-gcc-11.2.0` | Available on Sol; supplies `mksquashfs` 4.6.1 |
-| Course image | `safe-multi-embodied-agents.sif` | Path and SHA-256 are announced in Canvas. No image is included in the repository |
+| Course image | `safe-multi-embodied-agents.sif` | Course distribution is pending; use the path and SHA-256 in Canvas once announced. No image is included in the repository |
 
 The validation login was rejected for the requested course account/partition/QoS on October 17, 2026: `Invalid account or account/partition combination specified`. This does not confirm student access. Before using this route, check the course announcement and your own association:
 
@@ -20,6 +20,8 @@ sinfo -s -p public
 ```
 
 If the class account is absent or the allocation is rejected, contact course staff to resolve membership. Do not substitute another account in the course commands. Use CPU resources; do not request a GPU or an ARM/GH200 node.
+
+The container runtime, starter workflow, completed-policy experiments, batch execution, and submission packaging were rechecked on October 17, 2026 with Apptainer 1.4.5, Python 3.12.3, and SUMO 1.28.0. Class-account access and a course-readable image location remain pending. Wait for the course image announcement before replacing `<COURSE_PROVIDED_SIF>` below.
 
 Clone your private repository into `/scratch/$USER`, not into your home directory, so results and the image have room. Files there survive allocation release: your source edits, `results/`, `submission/answers.md`, and the submission ZIP. This is persistence between jobs, not a backup guarantee. Set up each new allocation with `module load apptainer/1.4.5` and `export SIF=...`; the batch scripts do this themselves. A submitting shell can pass environment variables to a job, but the image does not save shell settings.
 
@@ -50,14 +52,14 @@ Download `replay.html` files to your own computer, for example with the Sol web 
 
 ## 2. Batch execution
 
-From the lab directory, with `SIF` exported:
+Run the two Part 1 commands yourself inside an allocation (each takes a few seconds). Then, from the lab directory with `SIF` exported:
 
 ```bash
-sbatch scripts/sol_matrix.sbatch                          # the 12 required runs
+sbatch scripts/sol_matrix.sbatch                          # Part 3: the 12 required runs
 sbatch --export=ALL,RUN_GRAD=1 scripts/sol_matrix.sbatch  # also the CSE 598 sweep
 ```
 
-The job writes `results/sol-<jobid>/` plus an environment report, and the sweep directories next to it, so separate jobs never overwrite each other. The job log is `results/slurm-<jobid>.out`.
+The job writes the same directories as the interactive commands, `results/comparison/` and, with `RUN_GRAD=1`, `results/graduate-window-05`, `-1`, `-2`, and `-4`, so `make PY="bash scripts/sol_exec.sh python" submission GROUPID=<your group id> [REQUIRE_GRAD=1]` packages them without renaming or copying anything. Results are never overwritten: if any of those directories already exists, the job exits before running anything and names it. Move or delete the old run first, for example `mv results/comparison results/comparison-old`, then resubmit. The job log is `results/slurm-<jobid>.out` and the environment report `results/slurm-<jobid>-environment.json`; both carry the job ID, so repeated jobs keep their own diagnostics.
 
 ## 3. Building the image, only if no course image is provided
 
