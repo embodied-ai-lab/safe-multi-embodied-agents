@@ -23,7 +23,7 @@ Use the full path shown above when creating the virtual environment if another `
 ## Route A: Apple Silicon on macOS 15 or newer
 
 ```bash
-cd safe-multi-embodied-agents
+cd <PRIVATE_REPOSITORY>
 /opt/homebrew/opt/python@3.12/bin/python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
@@ -57,7 +57,7 @@ XQuartz is only relevant to the optional `sumo-gui` window; the graded runs neve
 3. Install only the two pure-Python packages at the version pinned in `requirements.txt`:
 
    ```bash
-   cd safe-multi-embodied-agents
+   cd <PRIVATE_REPOSITORY>
    /opt/homebrew/opt/python@3.12/bin/python3.12 -m venv .venv
    source .venv/bin/activate
    python -m pip install traci==1.28.0 sumolib==1.28.0

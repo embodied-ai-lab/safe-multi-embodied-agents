@@ -34,7 +34,7 @@ The image's headless `sumo` and `netconvert` launchers use its glibc loader expl
 ```bash
 interactive -A class_cse494598fall2026 -p public -q class -t 60 -c 2 --mem=4G
 module load apptainer/1.4.5
-cd /scratch/$USER/<your private repository>
+cd /scratch/$USER/<PRIVATE_REPOSITORY>
 export SIF=<COURSE_PROVIDED_SIF>
 sha256sum "$SIF"                 # compare with the announced checksum
 bash scripts/sol_exec.sh python check_environment.py

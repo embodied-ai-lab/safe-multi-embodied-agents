@@ -14,7 +14,7 @@ The shared libraries are what the `eclipse-sumo` wheel from PyPI needs at run ti
 
 ## Create the environment and check it
 
-From the lab directory:
+From the lab directory (i.e., <PRIVATE_REPOSITORY>):
 
 ```bash
 python3 -m venv .venv
